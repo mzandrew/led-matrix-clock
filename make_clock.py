@@ -1,7 +1,8 @@
 # from https://scipython.com/blog/generating-an-svg-clock-face/
 # modified to be called as a python function by mza
 # modified to tweak the format by mza
-# last updated 2020-09-08 by mza
+# modified for 64x64 pixel led matrix (black background), adjusted line widths, and no minute ticks
+# last updated 2020-10-15 by mza
 
 import sys
 import random
@@ -12,11 +13,11 @@ import datetime
 import inspect
 import os
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-#print(path)
 
 # Difficulty flags
 DIFFICULTIES = EASY, MEDIUM, HARD, VERYHARD = 'e', 'm', 'h', 'v'
+
+color = "#fb0"
 
 def preamble(fo):
 	"""The SVG preamble and styles."""
@@ -27,17 +28,18 @@ def preamble(fo):
 	print("""
 		<defs>
 		<style type="text/css"><![CDATA[""", file=fo)
-	print('circle {fill:none; stroke-width: 2px; stroke: #000;}', file=fo)
-	print('circle.centre-circ {fill:#000;}', file=fo)
-	print('line {stroke-width: 2px; stroke: #000;}', file=fo)
+	print('circle {fill:none; stroke-width: 0.75px; stroke: '+color+';}', file=fo)
+	print('circle.centre-circ {fill: #000;}', file=fo)
+	print('line {stroke-width: 1px; stroke: '+color+';}', file=fo)
 	print('text {dominant-baseline: middle; text-anchor:middle;'
 		  '	  font-family:Arial,Helvetica;font-size: 20pt;'
-		  '	  font-weight: bold;}', file=fo)
+		  '	  font-weight: bold; fill: '+color+';}', file=fo)
 	print('text.min-labels {font-size: 14pt; font-weight: normal;}', file=fo)
-	print('line.mn-hand {stroke-width: 5px; stroke: #000;}', file=fo)
-	print('line.hr-hand {stroke-width: 10px; stroke: #000;}', file=fo)
+	print('line.mn-hand {stroke-width: 1px; stroke: '+color+';}', file=fo)
+	print('line.hr-hand {stroke-width: 3px; stroke: '+color+';}', file=fo)
 	print("""]]></style>
 	</defs>""", file=fo)
+	print('<rect width="100%" height="100%" fill="#000"/>', file=fo)
 
 def make_clock_face(fo, cx, cy, r):
 	"""Make the clock face, with numbers and ticks."""
@@ -56,18 +58,17 @@ def make_clock_face(fo, cx, cy, r):
 			# This tick is an hour tick so it's a bit longer
 			hr += 1 
 			xt, yt = (r-30)*x + cx, (r-30)*y + cy
-			print('<text x="{}" y="{}">{}</text>'.format(xt,yt,str(hr+1)),
-				  file=fo)
+			#print('<text x="{}" y="{}">{}</text>'.format(xt,yt,str(hr+1)), file=fo)
 			if min_ticks and min_ticklabels:
 				xt, yt = (r+20)*x + cx, (r+20)*y + cy
 				print('<text x="{}" y="{}" class="min-labels">{}</text>'
 					  .format(xt,yt,str((hr+1)*5 % 60)), file=fo)
-			add_tick(x, y, 10)
+			add_tick(x, y, 4)
 			continue
 		if min_ticks:
 			# A regular minute tick
-			add_tick(x, y, 5)
-	print('<circle cx="{}" cy="{}" r="10" class="centre-circ"/>'.format(cx, cy), file=fo)
+			add_tick(x, y, 2)
+	#print('<circle cx="{}" cy="{}" r="10" class="centre-circ"/>'.format(cx, cy), file=fo)
 
 def add_clock_hands(fo, cx, cy, r, time):
 	"""Add the clock hands indicating the provided time."""
@@ -122,17 +123,16 @@ parser.add_argument('-L', '--no-minute-ticklabels', dest='no_min_ticklabels',
 	help='Suppress minute tick labels around the outside of the clock',
 	default=False, action='store_true')
 
-def generate_clock():
+def generate_clock(filename, time=datetime.datetime.now()):
 	# https://stackoverflow.com/a/30071999/5728815
-	now = datetime.datetime.now()
-	hr = now.hour % 12
+	hr = time.hour % 12
 	if 0==hr:
 		hr = 12
-	times = [ '{}:{}'.format(hr, now.minute) ]
+	times = [ '{}:{}'.format(hr, time.minute) ]
 	# We've got the parameters: los geht's!
 	cwidth = cheight = width // ncols
-	r = cwidth * 0.49
-	with open(path + "/time.svg", 'w') as fo:
+	r = cwidth * 0.48
+	with open(filename, 'w') as fo:
 		preamble(fo)
 		for i, time in enumerate(times):
 			#print('{:2d}:{:02d}'.format(*[int(s) for s in time.split(':')]))
@@ -142,7 +142,7 @@ def generate_clock():
 		print('</svg>', file=fo)
 
 # set defaults:
-min_ticks = 1
+min_ticks = 0
 min_ticklabels = 0
 n = 1
 nrows = 1
@@ -150,6 +150,14 @@ ncols = 1
 difficulty = ""
 width = 300
 height = 300
+
+def set_width(new_width):
+	global width
+	width = new_width
+
+def set_height(new_height):
+	global height
+	height = new_height
 
 if __name__ == "__main__":
 	args = parser.parse_args()
@@ -164,5 +172,5 @@ if __name__ == "__main__":
 	difficulty = args.difficulty
 	height = 300 * nrows // ncols
 	times = get_random_times(n, difficulty)
-	generate_clock()
+	generate_clock("time.svg")
 
