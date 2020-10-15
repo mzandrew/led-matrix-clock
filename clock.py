@@ -16,7 +16,8 @@ import datetime
 import inspect
 import os
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
+#path = os.path.dirname(os.path.abspath(filename))
+path = "/tmp"
 #print(path)
 import rgbmatrix
 options = rgbmatrix.RGBMatrixOptions()
