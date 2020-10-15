@@ -1,5 +1,5 @@
 # led-matrix-clock
-generates clockface and uploads it to an led matrix panel once a minute
+generates clockface and drives it to an led matrix panel
 
 ![image of clockface](led-matrix-clock.jpg)
 
