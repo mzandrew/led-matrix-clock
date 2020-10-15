@@ -17,7 +17,26 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 # Difficulty flags
 DIFFICULTIES = EASY, MEDIUM, HARD, VERYHARD = 'e', 'm', 'h', 'v'
 
-color = "#fb0"
+# set defaults:
+min_ticks = 0
+min_ticklabels = 0
+n = 1
+nrows = 1
+ncols = 1
+difficulty = ""
+width = 64
+height = 64
+circle_radius = 0.485
+minute_hand_length = 0.8
+hour_hand_length = 0.5
+
+amber = "#fe1"
+
+circle_color = "green"
+line_color = "green"
+minute_hand_color = "blue"
+hour_hand_color = "red"
+font_color = "white"
 
 def preamble(fo):
 	"""The SVG preamble and styles."""
@@ -28,15 +47,15 @@ def preamble(fo):
 	print("""
 		<defs>
 		<style type="text/css"><![CDATA[""", file=fo)
-	print('circle {fill:none; stroke-width: 0.75px; stroke: '+color+';}', file=fo)
+	print('circle {fill:none; stroke-width: 0.75px; stroke: '+circle_color+';}', file=fo)
 	print('circle.centre-circ {fill: #000;}', file=fo)
-	print('line {stroke-width: 1px; stroke: '+color+';}', file=fo)
+	print('line {stroke-width: 1px; stroke: '+line_color+';}', file=fo)
 	print('text {dominant-baseline: middle; text-anchor:middle;'
 		  '	  font-family:Arial,Helvetica;font-size: 20pt;'
-		  '	  font-weight: bold; fill: '+color+';}', file=fo)
-	print('text.min-labels {font-size: 14pt; font-weight: normal;}', file=fo)
-	print('line.mn-hand {stroke-width: 1px; stroke: '+color+';}', file=fo)
-	print('line.hr-hand {stroke-width: 3px; stroke: '+color+';}', file=fo)
+		  '	  font-weight: bold; fill: '+font_color+';}', file=fo)
+	print('text.min-labels {font-size: 14pt; font-weight: normal; fill: '+font_color+';}', file=fo)
+	print('line.mn-hand {stroke-width: 1px; stroke: '+minute_hand_color+';}', file=fo)
+	print('line.hr-hand {stroke-width: 3px; stroke: '+hour_hand_color+';}', file=fo)
 	print("""]]></style>
 	</defs>""", file=fo)
 	print('<rect width="100%" height="100%" fill="#000"/>', file=fo)
@@ -81,12 +100,12 @@ def add_clock_hands(fo, cx, cy, r, time):
 	# minutes
 	th = np.pi/30 * mn - np.pi/2
 	x, y = np.cos(th), np.sin(th)
-	x2, y2 = r*0.7*x + cx, r*0.7*y + cy
+	x2, y2 = r*minute_hand_length*x + cx, r*minute_hand_length*y + cy
 	hand_line(x2, y2, 'mn-hand')
 	# hours
 	th = np.pi/6 * hr - np.pi/2 + mn / 60 * np.pi / 6
 	x, y = np.cos(th), np.sin(th)
-	x2, y2 = r*0.45*x + cx, r*0.45*y + cy
+	x2, y2 = r*hour_hand_length*x + cx, r*hour_hand_length*y + cy
 	hand_line(x2, y2, 'hr-hand')
 
 def add_clock(fo, cx, cy, r, time):
@@ -131,7 +150,7 @@ def generate_clock(filename, time=datetime.datetime.now()):
 	times = [ '{}:{}'.format(hr, time.minute) ]
 	# We've got the parameters: los geht's!
 	cwidth = cheight = width // ncols
-	r = cwidth * 0.48
+	r = cwidth * circle_radius
 	with open(filename, 'w') as fo:
 		preamble(fo)
 		for i, time in enumerate(times):
@@ -140,16 +159,6 @@ def generate_clock(filename, time=datetime.datetime.now()):
 			cx = (i % ncols) * cheight + cheight // 2
 			add_clock(fo, cx, cy, r, time)
 		print('</svg>', file=fo)
-
-# set defaults:
-min_ticks = 0
-min_ticklabels = 0
-n = 1
-nrows = 1
-ncols = 1
-difficulty = ""
-width = 300
-height = 300
 
 def set_width(new_width):
 	global width
