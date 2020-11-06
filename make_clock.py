@@ -2,7 +2,7 @@
 # modified to be called as a python function by mza
 # modified to tweak the format by mza
 # modified for 64x64 pixel led matrix (black background), adjusted line widths, and no minute ticks
-# last updated 2020-10-15 by mza
+# last updated 2020-11-05 by mza
 
 import sys
 import random
@@ -32,11 +32,11 @@ hour_hand_length = 0.5
 
 amber = "#fe1"
 
-circle_color = "green"
-line_color = "green"
-minute_hand_color = "blue"
-hour_hand_color = "red"
-font_color = "white"
+circle_color      = "#008800"
+line_color        = "#008800"
+minute_hand_color = "#000088"
+hour_hand_color   = "#880000"
+font_color        = "#888888"
 
 def preamble(fo):
 	"""The SVG preamble and styles."""
