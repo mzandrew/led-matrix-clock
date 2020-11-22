@@ -25,21 +25,25 @@ options.rows = 64
 options.cols = 64
 options.hardware_mapping = "adafruit-hat-pwm"
 matrix = rgbmatrix.RGBMatrix(options = options)
+make_clock.set_width(width)
+make_clock.set_height(height)
 
 def setup(time=datetime.datetime.now()):
-	#print("setup()")
-	make_clock.set_width(width)
-	make_clock.set_height(height)
+	#print("")
+	#print(str(datetime.datetime.now()) + " setup(" + str(time) + ")")
 	make_clock.generate_clock(path + "/time.svg", time) # generates an svg file with a clockface of the given time
 	image = PythonMagick.Image(path + "/time.svg")
 	image.resize(resolution)
 	image.write(path + "/time.png")
-
-def show():
-	#print("show()")
+	global img
 	img = Image.open(path + "/time.png")
 	img = img.convert('RGB')
+	#print(str(datetime.datetime.now()) + " setup() complete")
+
+def show():
+	#print(str(datetime.datetime.now()) + " show()")
 	matrix.SetImage(img)
+	#print(str(datetime.datetime.now()) + " show() complete")
 
 def once():
 	setup()
