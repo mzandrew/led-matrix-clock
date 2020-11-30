@@ -26,7 +26,7 @@ if not os.path.isdir(path):
 import stat
 #if not os.access(path, os.W_OK):
 #	os.chmod(path, stat.S_IRWXU | stat.S_IRWXG)
-os.chmod(path, stat.S_IRWXU | stat.S_IRWXG)
+os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 fake_it = False
 if not fake_it:
 	import rgbmatrix
