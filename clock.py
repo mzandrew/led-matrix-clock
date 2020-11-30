@@ -16,12 +16,17 @@ import datetime
 import inspect
 import os
 import sys
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename)) + "/timecache"
+#filename = inspect.getframeinfo(inspect.currentframe()).filename
+#path = os.path.dirname(os.path.abspath(filename)) + "/timecache"
 #path = "/tmp/timecache"
-#print("using path")
+path = "/opt/timecache"
+#print("using " + path)
 if not os.path.isdir(path):
 	os.mkdir(path)
+import stat
+#if not os.access(path, os.W_OK):
+#	os.chmod(path, stat.S_IRWXU | stat.S_IRWXG)
+os.chmod(path, stat.S_IRWXU | stat.S_IRWXG)
 fake_it = False
 if not fake_it:
 	import rgbmatrix

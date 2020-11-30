@@ -2,7 +2,7 @@
 # modified to be called as a python function by mza
 # modified to tweak the format by mza
 # modified for 64x64 pixel led matrix (black background), adjusted line widths, and no minute ticks
-# last updated 2020-11-05 by mza
+# last updated 2020-11-30 by mza
 
 import sys
 import random
@@ -12,7 +12,7 @@ import datetime
 # from https://stackoverflow.com/a/6209894/5728815
 import inspect
 import os
-filename = inspect.getframeinfo(inspect.currentframe()).filename
+#filename = inspect.getframeinfo(inspect.currentframe()).filename
 
 # Difficulty flags
 DIFFICULTIES = EASY, MEDIUM, HARD, VERYHARD = 'e', 'm', 'h', 'v'
